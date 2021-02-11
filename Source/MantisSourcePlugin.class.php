@@ -67,7 +67,7 @@ abstract class MantisSourcePlugin extends MantisSourceBase {
 	 * @param object Changeset
 	 * @return string URL
 	 */
-	abstract public function url_repo( $p_repo, $t_changeset=null );
+	abstract public function url_repo( $p_repo, $p_changeset=null );
 
 	/**
 	 * Get a URL to a diff view of the given changeset.
@@ -109,7 +109,12 @@ abstract class MantisSourcePlugin extends MantisSourceBase {
 
 	/**
 	 * Output form elements for configuration options.
-	 * The first div should have class 'spacer'
+	 *
+	 * They are displayed at the bottom of the plugin's config page
+	 * (see manage_config_page.php). The first row should have class 'spacer',
+	 * and the function should output an even number of rows (including the
+	 * spacer row), to ensure that the VCS-specific section always start on an
+	 * even row (i.e. with white background). Add an empty row if needed.
 	 */
 	public function update_config_form() {}
 
@@ -121,7 +126,7 @@ abstract class MantisSourcePlugin extends MantisSourceBase {
 	/**
 	 * If necessary, check GPC inputs to determine if the checkin data
 	 * is for a repository handled by this VCS type.
-	 * @return array Array with "repo"=>Repository, "data"=>...
+	 * @return array|null Array with "repo"=>Repository, "data"=>...
 	 */
 	public function precommit() {}
 
@@ -191,7 +196,7 @@ class SourceGenericPlugin extends MantisSourcePlugin {
 		return $p_file->filename . ' (' . $p_file->revision . ')';
 	}
 
-	function url_repo( $p_repo, $t_changeset=null ) {
+	function url_repo( $p_repo, $p_changeset=null ) {
 		return $p_repo->url;
 	}
 

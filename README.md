@@ -3,7 +3,7 @@
 [![Gitter](https://img.shields.io/gitter/room/mantisbt-plugins/source-integration.svg)](https://gitter.im/mantisbt-plugins/source-integration)
 
 Copyright (c) 2008 - 2012  John Reese - http://noswap.com  
-Copyright (c) 2012 - 2017  MantisBT Team - mantisbt-dev@lists.sourceforge.net
+Copyright (c) 2012 - 2020  MantisBT Team - mantisbt-dev@lists.sourceforge.net
 
 Released under the [MIT license](http://opensource.org/licenses/MIT)
 
@@ -26,6 +26,7 @@ plugins:
   [cgit](http://hjemli.net/git/cgit/) web frontend installation.
 * **SourceGithub**: Git repositories hosted on [GitHub](http://github.com/).
 * **SourceGitlab**: Git repositories hosted on [GitLab](https://about.gitlab.com/).
+* **SourceAzureDevOps**: Git repositories hosted on [Azure DevOps Services Repos](https://azure.microsoft.com/en-us/services/devops/).
 * **SourceGitphp**: Git repositories accessible via a
   [Gitphp](https://gitphp.org/) web frontend installation.
 * **SourceGitweb**: Git repositories accessible via a
@@ -39,6 +40,9 @@ plugins:
 * **SourceSVN**: SVN repositories locally accessible by the SVN binaries.
 * **SourceViewVC**: SVN repositories accessible via a
   [ViewVC](http://www.viewvc.org/) web frontend installation.
+* **SourceVisualSVNServer**: SVN repositories hosted on a 
+  [VisualSVN Server](https://www.visualsvn.com/server/) installation,
+  with support for URL linking from MantisBT to VisualSVN Server's built-in web frontend.
 * **SourceWebSVN**: SVN repositories accessible via a
   [WebSVN](http://www.websvn.info/) web frontend installation.
 
@@ -48,12 +52,16 @@ integration framework and API.
 
 ## Requirements
 
-The Source Integration framework requires [MantisBT](http://www.mantisbt.org/)
-version **2.0.1** or higher.
+The Source Integration framework requires **[MantisBT](http://www.mantisbt.org/)
+version 2.21.0** or higher.
 
-Additionally, the _SourceBitBucket_ and _SourceGithub_ plugins
-require the [PHP Curl extension](http://php.net/book.curl), or the ability to
-execute system calls ([shell_exec](http://php.net/function.shell-exec)).
+### VCS plugins
+
+Some VCS plugins have additional, specific requirements:
+
+- **SourceBitBucket** requires the 
+  [PHP Curl extension](http://php.net/book.curl), or the ability to execute  
+  system calls (via [shell_exec](http://php.net/function.shell-exec)).
 
 
 ## Installation
@@ -74,8 +82,8 @@ or the relevant branch in the Plugin's GitHub repository, as per the table below
 MantisBT version | Tags | Branch | Notes
 :---:|---|---|---
 2.x   | v2.* | [master](https://github.com/mantisbt-plugins/source-integration/archive/master.zip) | **Current release**
-1.3.x | v1.* | [master-1.3.x](https://github.com/mantisbt-plugins/source-integration/archive/master-1.3.x.zip) | Old stable (bug fixes only)
-1.2.x | v0.* | [master-1.2.x](https://github.com/mantisbt-plugins/source-integration/archive/master-1.2.x.zip) | Legacy (no longer supported)
+1.3.x | v1.* | [master-1.3.x](https://github.com/mantisbt-plugins/source-integration/archive/master-1.3.x.zip) | Support ended 2020-12-31
+1.2.x | v0.* | [master-1.2.x](https://github.com/mantisbt-plugins/source-integration/archive/master-1.2.x.zip) | Support ended 2017-06-30
 
 
 ### Setup instructions
@@ -118,8 +126,10 @@ MantisBT version | Tags | Branch | Notes
 
     * [SourceGithub](docs/CONFIGURING.SourceGithub.md)
     * [SourceGitlab](SourceGitlab/README.md)
+    * [SourceAzureDevOps](docs/CONFIGURING.SourceAzureDevOps.md)
     * [SourceViewVC](docs/CONFIGURING.SourceViewVC.md)
     * [SourceSVN](docs/CONFIGURING.SourceSVN.md)
+    * [SourceVisualSVNServer](docs/CONFIGURING.SourceVisualSVNServer.md)
 
 9. Once configured, click the "Return to Repository" link and click either
    the "Import Everything" or "Import Newest Data" button to perform initial
@@ -143,7 +153,16 @@ MantisBT version | Tags | Branch | Notes
 
     This will import new changesets for all configured repositories.
 
-11. Add additional repositories as needed.
+11. You can also configure event-driven import of new changesets. Many source control 
+    systems support configurable hooks or triggers which can be used to notify the 
+    **Source** plugin that new commits or revisions are available for import. This 
+    improves user experience by eliminating delays between source control commits and 
+    MantisBT state updates.
+
+    Refer to the configuration documentation for the relevant plugin extension(s) for more 
+    information.
+
+12. Add additional repositories as needed.
 
 ## Support
 

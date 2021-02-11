@@ -3,13 +3,13 @@
 # Copyright (c) 2014 Sergey Marchenko
 # Licensed under the MIT license
 
-if( false === include_once(config_get( 'plugin_path' ) . 'Source/MantisSourcePlugin.class.php') ) {
+if( false === include_once(config_get( 'plugin_path' ) . 'Source/MantisSourceGitBasePlugin.class.php') ) {
 	return;
 }
 
 require_once(config_get( 'core_path' ) . 'json_api.php');
 
-class SourceBitBucketPlugin extends MantisSourcePlugin {
+class SourceBitBucketPlugin extends MantisSourceGitBasePlugin {
 
 	const PLUGIN_VERSION = '2.1.0';
 	const FRAMEWORK_VERSION_REQUIRED = '2.0.0';
@@ -111,7 +111,7 @@ class SourceBitBucketPlugin extends MantisSourcePlugin {
 		if( isset($p_repo->info['master_branch']) ) {
 			$t_master_branch = $p_repo->info['master_branch'];
 		} else {
-			$t_master_branch = 'master';
+			$t_master_branch = $this->get_default_primary_branches();
 		}
 		?>
 		<tr>
@@ -223,7 +223,7 @@ class SourceBitBucketPlugin extends MantisSourcePlugin {
 		$t_branch = $p_repo->info['master_branch'];
 
 		if( is_blank( $t_branch ) ) {
-			$t_branch = 'master';
+			$t_branch = $this->get_default_primary_branches();
 		}
 
 		$t_username = $p_repo->info['bit_username'];

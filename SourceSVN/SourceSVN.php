@@ -9,7 +9,7 @@ if ( false === include_once( config_get( 'plugin_path' ) . 'Source/MantisSourceP
 
 class SourceSVNPlugin extends MantisSourcePlugin {
 
-	const PLUGIN_VERSION = '2.2.0';
+	const PLUGIN_VERSION = '2.3.0';
 	const FRAMEWORK_VERSION_REQUIRED = '2.0.0';
 
 	/**
@@ -92,49 +92,63 @@ class SourceSVNPlugin extends MantisSourcePlugin {
 
 ?>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'svn_username' ) ?></td>
+	<td class="category">
+		<label for="svn_username"><?php echo plugin_lang_get( 'svn_username' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="svn_username" maxlength="250" size="40" value="<?php echo string_attribute( $t_svn_username ) ?>"/>
+		<input type="text" id="svn_username" name="svn_username" maxlength="250" size="40" value="<?php echo string_attribute( $t_svn_username ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'svn_password' ) ?></td>
+	<td class="category">
+		<label for="svn_password"><?php echo plugin_lang_get( 'svn_password' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="svn_password" maxlength="250" size="40" value="<?php echo string_attribute( $t_svn_password ) ?>"/>
+		<input type="text" id="svn_password" name="svn_password" maxlength="250" size="40" value="<?php echo string_attribute( $t_svn_password ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'standard_repo' ) ?></td>
+	<td class="category">
+		<label for="standard_repo"><?php echo plugin_lang_get( 'standard_repo' ) ?></label>
+	</td>
 	<td>
 		<label>
-			<input name="standard_repo" type="checkbox" class="ace" <?php echo ($t_standard_repo ? 'checked="checked"' : '') ?>/>
+			<input id="standard_repo" name="standard_repo" type="checkbox" class="ace" <?php echo ($t_standard_repo ? 'checked="checked"' : '') ?>/>
 			<span class="lbl"></span>
 		</label>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'trunk_path' ) ?></td>
+	<td class="category">
+		<label for="trunk_path"><?php echo plugin_lang_get( 'trunk_path' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="trunk_path" maxlength="250" size="40" value="<?php echo string_attribute( $t_trunk_path ) ?>"/>
+		<input type="text" id="trunk_path" name="trunk_path" maxlength="250" size="40" value="<?php echo string_attribute( $t_trunk_path ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'branch_path' ) ?></td>
+	<td class="category">
+		<label for="branch_path"><?php echo plugin_lang_get( 'branch_path' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="branch_path" maxlength="250" size="40" value="<?php echo string_attribute( $t_branch_path ) ?>"/>
+		<input type="text" id="branch_path" name="branch_path" maxlength="250" size="40" value="<?php echo string_attribute( $t_branch_path ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'tag_path' ) ?></td>
+	<td class="category">
+		<label for="tag_path"><?php echo plugin_lang_get( 'tag_path' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="tag_path" maxlength="250" size="40" value="<?php echo string_attribute( $t_tag_path ) ?>"/>
+		<input type="text" id="tag_path" name="tag_path" maxlength="250" size="40" value="<?php echo string_attribute( $t_tag_path ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'ignore_paths' ) ?></td>
+	<td class="category">
+		<label for="ignore_paths"><?php echo plugin_lang_get( 'ignore_paths' ) ?></label>
+	</td>
 	<td>
 		<label>
-			<input name="ignore_paths" type="checkbox" class="ace" <?php echo ($t_ignore_paths ? 'checked="checked"' : '') ?>/>
+			<input id="ignore_paths" name="ignore_paths" type="checkbox" class="ace" <?php echo ($t_ignore_paths ? 'checked="checked"' : '') ?>/>
 			<span class="lbl"></span>
 		</label>
 	</td>
@@ -167,43 +181,50 @@ class SourceSVNPlugin extends MantisSourcePlugin {
 			$t_winstart = plugin_config_get( 'winstart', '' );
 
 ?>
-<table class="table table-striped table-bordered table-condensed">
 	<tr class="spacer"></tr>
 	<tr>
 		<td colspan="2"><h4><?php echo plugin_lang_get( 'title' ) ?></h4></td>
 	</tr>
 	<tr>
-		<td class="category"><?php echo plugin_lang_get( 'svnpath' ) ?></td>
+		<td class="category">
+			<label for="plugin_SourceSVN_svnpath"><?php echo plugin_lang_get( 'svnpath' ) ?></label>
+		</td>
 		<td>
-			<input type="text" name="plugin_SourceSVN_svnpath" value="<?php echo string_attribute( $t_svnpath ) ?>" size="40"/>
+			<input type="text" id="plugin_SourceSVN_svnpath" name="plugin_SourceSVN_svnpath" value="<?php echo string_attribute( $t_svnpath ) ?>" size="40"/>
 		</td>
 	</tr>
 	<tr>
+		<td class="category">
+			<label for="plugin_SourceSVN_svnargs"><?php echo plugin_lang_get( 'svnargs' ) ?></label>
+		</td>
 		<td class="category"><?php echo plugin_lang_get( 'svnargs' ) ?></td>
 		<td>
-			<input type="text" name="plugin_SourceSVN_svnargs" value="<?php echo string_attribute( $t_svnargs ) ?>" size="40"/>
+			<input type="text" id="plugin_SourceSVN_svnargs" name="plugin_SourceSVN_svnargs" value="<?php echo string_attribute( $t_svnargs ) ?>" size="40"/>
 		</td>
 	</tr>
 	<tr>
-		<td class="category"><?php echo plugin_lang_get( 'svnssl' ) ?></td>
+		<td class="category">
+			<label for="plugin_SourceSVN_svnssl"><?php echo plugin_lang_get( 'svnssl' ) ?></label>
+		</td>
 		<td>
 			<label>
-				<input name="plugin_SourceSVN_svnssl" type="checkbox" class="ace" <?php check_checked( (bool)$t_svnssl ) ?>/>
+				<input id="plugin_SourceSVN_svnssl" name="plugin_SourceSVN_svnssl" type="checkbox" class="ace" <?php check_checked( (bool)$t_svnssl ) ?>/>
 				<span class="lbl"></span>
 			</label>
 		</td>
 	</tr>
 	<tr>
-		<td class="category"><?php echo plugin_lang_get( 'winstart' ) ?></td>
+		<td class="category">
+			<label for="plugin_SourceSVN_winstart"><?php echo plugin_lang_get( 'winstart' ) ?></label>
+		</td>
 		<td>
 			<label>
-				<input name="plugin_SourceSVN_winstart" type="checkbox" class="ace" <?php check_checked( (bool)$t_winstart ) ?>/>
+				<input id="plugin_SourceSVN_winstart" name="plugin_SourceSVN_winstart" type="checkbox" class="ace" <?php check_checked( (bool)$t_winstart ) ?>/>
 				<span class="lbl"></span>
 			</label>
 		</td>
 	</tr>
 	<tr class="spacer"></tr>
-</table>
 
 <?php
 		}
@@ -338,12 +359,23 @@ class SourceSVNPlugin extends MantisSourcePlugin {
 			plugin_error( self::ERROR_SVN_RUN );
 		}
 
-		# Get output of the process & clean up
-		$t_stderr = stream_get_contents( $t_pipes[2] );
-		fclose( $t_pipes[2] );
+		# Get the output of the process & clean up
+		# Due to limitations on the buffering of pipes (at least on Windows) and
+		# possible resulting deadlocks, the order the pipes are read is crucial.
+		# Processing STDOUT before STDERR will NOT(!) prevent a deadlock if the
+		# output to STDERR exceeds the pipe's max buffered size.
+		# As discussed in #261, it is better to handle an unlikely error
+		# scenario, than to frequently get stuck when processing good commits.
+
+		#STDOUT
 		$t_svn_out = stream_get_contents( $t_pipes[1] );
 		fclose( $t_pipes[1] );
+		#STDERR
+		$t_stderr = stream_get_contents( $t_pipes[2] );
+		fclose( $t_pipes[2] );
+		#STDIN
 		fclose( $t_pipes[0] );
+
 		proc_close( $t_svn_proc );
 
 		# Error handling

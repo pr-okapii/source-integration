@@ -60,8 +60,8 @@ class SourceGitwebPlugin extends MantisSourceGitBasePlugin {
 		return $t_uri_base;
 	}
 
-	public function url_repo( $p_repo, $t_changeset=null ) {
-		return $this->uri_base( $p_repo ) . ( $t_changeset ? 'h=' . $t_changeset->revision : '' );
+	public function url_repo($p_repo, $p_changeset=null ) {
+		return $this->uri_base( $p_repo ) . ( $p_changeset ? 'h=' . $p_changeset->revision : '' );
 	}
 
 	public function url_changeset( $p_repo, $p_changeset ) {
@@ -104,7 +104,7 @@ class SourceGitwebPlugin extends MantisSourceGitBasePlugin {
 		if ( isset( $p_repo->info['master_branch'] ) ) {
 			$t_master_branch = $p_repo->info['master_branch'];
 		} else {
-			$t_master_branch = 'master';
+			$t_master_branch = $this->get_default_primary_branches();
 		}
 ?>
 <tr>
@@ -189,7 +189,7 @@ class SourceGitwebPlugin extends MantisSourceGitBasePlugin {
 
 		$t_branch = $p_repo->info['master_branch'];
 		if ( is_blank( $t_branch ) ) {
-			$t_branch = 'master';
+			$t_branch = $this->get_default_primary_branches();
 		}
 
 		if ($t_branch != '*')

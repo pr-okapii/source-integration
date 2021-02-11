@@ -57,8 +57,8 @@ class SourceCgitPlugin extends MantisSourceGitBasePlugin {
 		return $t_uri_base;
 	}
 
-	public function url_repo( $p_repo, $t_changeset=null ) {
-		return $this->uri_base( $p_repo ) . ( $t_changeset ? 'commit/?id=' . $t_changeset->revision : '' );
+	public function url_repo($p_repo, $p_changeset=null ) {
+		return $this->uri_base( $p_repo ) . ( $p_changeset ? 'commit/?id=' . $p_changeset->revision : '' );
 	}
 
 	public function url_commit ( $p_repo, $commit_rev) {
@@ -93,7 +93,7 @@ class SourceCgitPlugin extends MantisSourceGitBasePlugin {
 		if ( isset( $p_repo->info['master_branch'] ) ) {
 			$t_master_branch = $p_repo->info['master_branch'];
 		} else {
-			$t_master_branch = 'master';
+			$t_master_branch = $this->get_default_primary_branches();
 		}
 ?>
 <tr>
@@ -157,7 +157,7 @@ class SourceCgitPlugin extends MantisSourceGitBasePlugin {
 
 		$t_branch = $p_repo->info['master_branch'];
 		if ( is_blank( $t_branch ) ) {
-			$t_branch = 'master';
+			$t_branch = $this->get_default_primary_branches();
 		}
 
 		$t_branches = array_map( 'trim', explode( ',', $t_branch ) );

@@ -4,6 +4,8 @@
 # Copyright (c) 2014 Bob Clough
 # Licensed under the MIT license
 
+/** @noinspection SqlResolve, PhpIncludeInspection */
+
 if ( false === include_once( config_get( 'plugin_path' ) . 'Source/MantisSourceGitBasePlugin.class.php' ) ) {
 	return;
 }
@@ -13,14 +15,16 @@ require_once( config_get( 'core_path' ) . 'json_api.php' );
 
 class SourceGitlabPlugin extends MantisSourceGitBasePlugin {
 
-	const PLUGIN_VERSION = '2.0.3';
+	const PLUGIN_VERSION = '2.0.4';
 	const FRAMEWORK_VERSION_REQUIRED = '2.0.0';
 
-    /**
-     * GitLab API version, used to build the API URI
-     * @see api_uri()
-     */
-    const API_VERSION = 'v4';
+	/**
+	 * GitLab API version, used to build the API URI
+	 * @see api_uri()
+	 */
+	const API_VERSION = 'v4';
+
+	public $linkPullRequest = 'merge_requests/%s';
 
 	public function register() {
 		$this->name = plugin_lang_get( 'title' );
@@ -89,12 +93,11 @@ class SourceGitlabPlugin extends MantisSourceGitBasePlugin {
 		$t_root = $p_repo->info['hub_root'];
 		$t_reponame = $p_repo->info['hub_reponame'];
 		$t_ref = $p_changeset->revision;
-		$t_filename = $p_file->filename;
 
 		return "$t_root/$t_reponame/commit/$t_ref?view=parallel";
 	}
 
-public function update_repo_form( $p_repo ) {
+	public function update_repo_form( $p_repo ) {
 		$t_hub_root = null;
 		$t_hub_repoid = null;
 		$t_hub_reponame = null;
@@ -115,37 +118,50 @@ public function update_repo_form( $p_repo ) {
 		if ( isset( $p_repo->info['master_branch'] ) ) {
 			$t_master_branch = $p_repo->info['master_branch'];
 		} else {
-			$t_master_branch = 'master';
+			$t_master_branch = $this->get_default_primary_branches();
 		}
 ?>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'hub_root' ) ?></td>
+	<td class="category">
+		<label for="hub_root"><?php echo plugin_lang_get( 'hub_root' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="hub_root" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_root ) ?>"/>
+		<input type="text" id="hub_root" name="hub_root" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_root ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'hub_repoid' ) ?></td>
+	<td class="category">
+		<label for="hub_repoid"><?php echo plugin_lang_get( 'hub_repoid' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="hub_repoid" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_repoid ) ?>"/>
+		<input type="text" id="hub_repoid" name="hub_repoid" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_repoid ) ?>"/>
+<?php if( !is_numeric( $t_hub_repoid ) ) { ?>
+		<i class="fa fa-warning ace-icon fa-lg red"></i>
+<?php } ?>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'hub_reponame' ) ?></td>
+	<td class="category">
+		<label for="hub_reponame"><?php echo plugin_lang_get( 'hub_reponame' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="hub_reponame" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_reponame ) ?>"/>
+		<input type="text" id="hub_reponame" name="hub_reponame" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_reponame ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'hub_app_secret' ) ?></td>
+	<td class="category">
+		<label for="hub_app_secret"><?php echo plugin_lang_get( 'hub_app_secret' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="hub_app_secret" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_app_secret ) ?>"/>
+		<input type="text" id="hub_app_secret" name="hub_app_secret" maxlength="250" size="40" value="<?php echo string_attribute( $t_hub_app_secret ) ?>"/>
 	</td>
 </tr>
 <tr>
-	<td class="category"><?php echo plugin_lang_get( 'master_branch' ) ?></td>
+	<td class="category">
+		<label for="master_branch"><?php echo plugin_lang_get( 'master_branch' ) ?></label>
+	</td>
 	<td>
-		<input type="text" name="master_branch" maxlength="250" size="40" value="<?php echo string_attribute( $t_master_branch ) ?>"/>
+		<input type="text" id="master_branch" name="master_branch" maxlength="250" size="40" value="<?php echo string_attribute( $t_master_branch ) ?>"/>
 	</td>
 </tr>
 <?php
@@ -153,9 +169,15 @@ public function update_repo_form( $p_repo ) {
 
 	public function update_repo( $p_repo ) {
 		$f_hub_root = gpc_get_string( 'hub_root' );
-		$f_hub_repoid = gpc_get_string( 'hub_repoid' );
 		$f_hub_reponame = gpc_get_string( 'hub_reponame' );
 		$f_hub_app_secret = gpc_get_string( 'hub_app_secret' );
+
+		# Clear the repoid if reponame has changed
+		if( $p_repo->info['hub_reponame'] != $f_hub_reponame ) {
+			$f_hub_repoid = null;
+		} else {
+			$f_hub_repoid = gpc_get_string( 'hub_repoid' );
+		}
 
 		# Update info required for getting the repoid
 		$p_repo->info['hub_root'] = $f_hub_root;
@@ -166,14 +188,28 @@ public function update_repo_form( $p_repo ) {
 		if( !is_numeric( $f_hub_repoid ) && !empty( $f_hub_reponame ) ) {
 			$t_hub_reponame_enc = urlencode( $f_hub_reponame );
 			$t_uri = $this->api_uri( $p_repo, "projects/$t_hub_reponame_enc" );
-			$t_member = null;
-			$t_json = json_url( $t_uri, $t_member );
+			$t_json = json_url( $t_uri );
 
-			$f_hub_repoid = 'Repository Name is invalid';
-			if( !is_null( $t_json ) ) {
-				if ( property_exists( $t_json, 'id' ) ) {
+			# Error handling
+			$t_message = '';
+			if( $t_json ) {
+				if( property_exists( $t_json, 'id' ) ) {
 					$f_hub_repoid = (string)$t_json ->id;
+				} elseif( property_exists( $t_json, 'error_description' ) ) {
+					$t_message = $t_json ->error_description;
+				} elseif( property_exists( $t_json, 'message' ) ) {
+					$t_message = $t_json ->message;
 				}
+			}
+			# repoid was not retrieved - format error message
+			if( !is_numeric( $f_hub_repoid ) ) {
+				if( !$t_message ) {
+					$t_message = plugin_lang_get( 'error_api_generic' );
+				}
+				$f_hub_repoid = sprintf(
+					plugin_lang_get( 'error_api' ),
+					$t_message
+				);
 			}
 		}
 
@@ -204,12 +240,12 @@ public function update_repo_form( $p_repo ) {
 	public function precommit() {
 		$f_payload = file_get_contents( "php://input" );
 		if( is_null( $f_payload ) ) {
-			return;
+			return null;
 		}
 
 		$t_data = json_decode( $f_payload, true );
 		if( is_null( $t_data ) ) {
-			return;
+			return null;
 		}
 
 		$t_repoid = $t_data['project_id'];
@@ -219,7 +255,7 @@ public function update_repo_form( $p_repo ) {
 		$t_result = db_query( $t_query, array( '%' . $t_repoid . '%' ) );
 
 		if ( db_num_rows( $t_result ) < 1 ) {
-			return;
+			return null;
 		}
 		while ( $t_row = db_fetch_array( $t_result ) ) {
 			$t_repo = new SourceRepo( $t_row['type'], $t_row['name'], $t_row['url'], $t_row['info'] );
@@ -228,7 +264,7 @@ public function update_repo_form( $p_repo ) {
 				return array( 'repo' => $t_repo, 'data' => $t_data );
 			}
 		}
-		return;
+		return null;
 	}
 
 	public function commit( $p_repo, $p_data ) {
@@ -249,7 +285,7 @@ public function update_repo_form( $p_repo ) {
 
 		$t_branch = $p_repo->info['master_branch'];
 		if ( is_blank( $t_branch ) ) {
-			$t_branch = 'master';
+			$t_branch = $this->get_default_primary_branches();
 		}
 
 		# if we're not allowed everything, populate an array of what we are allowed
@@ -277,7 +313,7 @@ public function update_repo_form( $p_repo ) {
 		foreach( $t_branches as $t_branch ) {
 			$t_query = "SELECT parent FROM $t_changeset_table
 				WHERE repo_id=" . db_param() . ' AND branch=' . db_param() .
-				' ORDER BY timestamp ASC';
+				' ORDER BY timestamp';
 			$t_result = db_query( $t_query, array( $p_repo->id, $t_branch->name ), 1 );
 
 			$t_commits = array( $t_branch->commit->id );
@@ -324,7 +360,7 @@ public function update_repo_form( $p_repo ) {
 			$t_member = null;
 			$t_json = json_url( $t_uri, $t_member );
 			if ( false === $t_json || is_null( $t_json ) ) {
-				# Some error occured retrieving the commit
+				# Some error occurred retrieving the commit
 				echo "failed.\n";
 				continue;
 			} else if ( !property_exists( $t_json, 'id' ) ) {
@@ -347,10 +383,6 @@ public function update_repo_form( $p_repo ) {
 	private function json_commit_changeset( $p_repo, $p_json, $p_branch='' ) {
 		echo "processing $p_json->id ... ";
 		if ( !SourceChangeset::exists( $p_repo->id, $p_json->id ) ) {
-			$t_parents = array();
-			foreach( $p_json->parent_ids as $t_parent ) {
-				$t_parents[] = $t_parent;
-			}
 			# Message will be replaced by title in gitlab version earlier than 7.2
 			$t_message = ( !property_exists( $p_json, 'message' ) )
 				? $p_json->title
@@ -364,9 +396,12 @@ public function update_repo_form( $p_repo ) {
 				$t_message
 			);
 
-			if ( count( $p_json->parents ) > 0 ) {
-				$t_parent = $p_json->parents[0];
-				$t_changeset->parent = $t_parent->id;
+			$t_parents = array();
+			foreach( $p_json->parent_ids as $t_parent ) {
+				$t_parents[] = $t_parent;
+			}
+			if( $t_parents ) {
+				$t_changeset->parent = $t_parents[0];
 			}
 
 			$t_changeset->author_email = $p_json->author_email;
@@ -379,8 +414,6 @@ public function update_repo_form( $p_repo ) {
 			return array( null, array() );
 		}
 	}
-
-
 
 	public static function url_post( $p_url, $p_post_data ) {
 		$t_post_data = http_build_query( $p_post_data );

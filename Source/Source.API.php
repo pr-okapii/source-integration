@@ -486,7 +486,7 @@ class SourceVCS {
 	 * Retrieve an extension plugin that can handle the requested repo's VCS type.
 	 * If the requested type is not available, the "generic" type will be returned.
 	 * @param object $p_repo Repository object
-	 * @return object VCS plugin
+	 * @return MantisSourcePlugin VCS plugin
 	 */
 	static public function repo( $p_repo ) {
 		return self::type( $p_repo->type );
@@ -496,7 +496,7 @@ class SourceVCS {
 	 * Retrieve an extension plugin that can handle the requested VCS type.
 	 * If the requested type is not available, the "generic" type will be returned.
 	 * @param string $p_type VCS type
-	 * @return object VCS plugin
+	 * @return MantisSourcePlugin VCS plugin
 	 */
 	static public function type( $p_type ) {
 		$p_type = strtolower( $p_type );
@@ -521,7 +521,14 @@ class SourceVCS {
  * Class for wrapping VCS objects with plugin API calls
  */
 class SourceVCSWrapper {
+	/**
+	 * @var MantisSourcePlugin $object
+	 */
 	private $object;
+
+	/**
+	 * @var string $basename
+	 */
 	private $basename;
 
 	/**
@@ -679,11 +686,16 @@ class SourceRepo {
 		$t_stats['changesets'] = db_result( db_query( $t_query, array( $this->id ) ) );
 
 		if ( $p_all ) {
-			$t_query = "SELECT COUNT(DISTINCT filename) FROM $t_file_table AS f
+			# files can be very slow
+			if( plugin_config_get( 'show_file_stats' ) ) {
+				$t_query = "SELECT COUNT(DISTINCT filename) FROM $t_file_table AS f
 						JOIN $t_changeset_table AS c
 						ON c.id=f.change_id
 						WHERE c.repo_id=" . db_param();
-			$t_stats['files'] = db_result( db_query( $t_query, array( $this->id ) ) );
+				$t_stats['files'] = db_result( db_query( $t_query, array( $this->id ) ) );
+			} else { 
+				$t_stats['files'] = -1;
+			}
 
 			$t_query = "SELECT COUNT(DISTINCT bug_id) FROM $t_bug_table AS b
 						JOIN $t_changeset_table AS c

@@ -10,12 +10,106 @@ specification.
 
 # Releases for MantisBT 2.x
 
+## [Unreleased]
+
+### Added
+
+- New Azure DevOps Service VCS Plugin, thanks to Stefan Gross
+  [#340](https://github.com/mantisbt-plugins/source-integration/issues/340)
+- GitLab: Pull Request linking
+  [#353](https://github.com/mantisbt-plugins/source-integration/issues/353)
+- Allow disabling file stats on Index page
+  [#358](https://github.com/mantisbt-plugins/source-integration/issues/358)
+
+### Changed
+
+- Minimum MantisBT version increased to 2.21.0
+  [#350](https://github.com/mantisbt-plugins/source-integration/issues/350)
+- Only show "Attach issues" column if needed
+  [#355](https://github.com/mantisbt-plugins/source-integration/issues/355)
+- GitLab: improve error handling when setting repoid
+  [#352](https://github.com/mantisbt-plugins/source-integration/issues/352)
+- Code cleanup
+
+### Fixed
+
+- Replace deprecated html_get_status_css_class() function
+  [#350](https://github.com/mantisbt-plugins/source-integration/issues/350)
+- GitHub: prevent creating Webhook if secret changed
+  [#357](https://github.com/mantisbt-plugins/source-integration/issues/357)
+
+## [2.4.1] - 2021-01-19
+
+### Changed
+
+- Confusing documentation for GitHub Webhook Secret
+  [#345](https://github.com/mantisbt-plugins/source-integration/issues/345)
+
+### Fixed
+
+- GitLab: Fix system warning when committing
+  [#346](https://github.com/mantisbt-plugins/source-integration/issues/346)
+- Unparenthesized `a ? b : c ? d : e` not supported (PHP8)
+  [#347](https://github.com/mantisbt-plugins/source-integration/issues/347)
+- Changeset reference not processed at beginning of bugnote
+  [#351](https://github.com/mantisbt-plugins/source-integration/issues/351)
+- On List page, "Attach issues" is shown for users with read-only access
+  [#354](https://github.com/mantisbt-plugins/source-integration/issues/354)
+
+### Security
+
+- Private issue information disclosure (CVE-2020-36192),
+  thanks to [d3vpoo1](https://gitlab.com/jrckmcsb)
+  [#344](https://github.com/mantisbt-plugins/source-integration/issues/344)
+- Only attach Issues to changeset if authorized (CVE-2020-36192)
+  [#344](https://github.com/mantisbt-plugins/source-integration/issues/344)
+- Unprivileged user can detach private Issue from Changeset
+  [#356](https://github.com/mantisbt-plugins/source-integration/issues/356)
+
+
+## [2.4.0] - 2020-05-19
+
+### Added
+
+- Support for VisualSVN Server, thanks to David Hopkins, FBR Ltd
+  [#313](https://github.com/mantisbt-plugins/source-integration/pull/313)
+- Default primary branch can be configured for git-based repositories 
+  [#308](https://github.com/mantisbt-plugins/source-integration/issues/308)
+
+### Changed
+
+- GitHub: use GuzzleHttp instead of cURL
+  [#336](https://github.com/mantisbt-plugins/source-integration/issues/336)
+- SVN: improve documentation
+  [#311](https://github.com/mantisbt-plugins/source-integration/pull/311)
+
+### Fixed
+
+- GitHub: allow processing more than 30 branches 
+  [#327](https://github.com/mantisbt-plugins/source-integration/issues/327)
+- GitHub: authentication using query parameters is deprecated 
+  [#335](https://github.com/mantisbt-plugins/source-integration/issues/335)
+- SVN: Workaround to avoid data import failures due to timeout reading proc_open() buffers
+  [#333](https://github.com/mantisbt-plugins/source-integration/issues/333)
+
+
+## [2.3.1] - 2020-02-13
+
+Includes all changes and fixes from [1.6.2](#162---2020-02-13).
+
+### Security
+
+- Fix XSS in Delete Repository page (CVE-2020-8981)
+  [#338](https://github.com/mantisbt-plugins/source-integration/issues/338)
+
+
 ## [2.3.0] - 2019-09-06
 
 ### Fixed
 
 - Support for BitBucket API 2.0
   [#320](https://github.com/mantisbt-plugins/source-integration/issues/320)
+
 
 ## [2.2.0] - 2019-03-26
 
@@ -64,7 +158,7 @@ Includes all changes and fixes from [1.5.9](#159---2018-09-02).
 
 ### Security
 
-- Fix XSS in Manage Repository and Changesets List pages (CVE request pending)
+- Fix XSS in Manage Repository and Changesets List pages (CVE-2018-16362)
   [#286](https://github.com/mantisbt-plugins/source-integration/issues/286)
 
 
@@ -222,7 +316,17 @@ Includes all changes and fixes from [1.5.0](#150---2017-03-06).
 
 --------------------------------------------------------------------------------
 
-# Releases for MantisBT 1.3
+# Legacy Releases for MantisBT 1.3
+
+Support for the 1.x branch ended on 2020-12-31. 
+
+## [1.6.2] - 2020-02-13
+
+### Security
+
+- Fix XSS in Delete Repository page (CVE-2020-8981)
+  [#338](https://github.com/mantisbt-plugins/source-integration/issues/338)
+
 
 ## [1.6.1] - 2019-03-26
 
@@ -244,7 +348,7 @@ Includes all changes and fixes from [1.5.0](#150---2017-03-06).
 
 ### Security
 
-- Fix XSS in Manage Repository and Changesets List pages (CVE request pending)
+- Fix XSS in Manage Repository and Changesets List pages (CVE-2018-16362)
   [#286](https://github.com/mantisbt-plugins/source-integration/issues/286)
 
 ## [1.5.8] - 2018-08-30
@@ -440,6 +544,8 @@ Includes all changes and fixes from master-1.2.x branch, up to commit
 
 # Legacy releases for MantisBT 1.2
 
+Support for the 0.x branch ended on 2017-06-30.
+
 ## [0.19] - 2017-02-06
 ## [0.18] - 2013-02-22
 ## [0.17] - 2012-12-07
@@ -464,8 +570,11 @@ Includes all changes and fixes from master-1.2.x branch, up to commit
 ## [0.9] - 2008-04-11
 
 
-[Unreleased 2.x]: https://github.com/mantisbt-plugins/source-integration/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/mantisbt-plugins/source-integration/compare/v2.4.1...HEAD
 
+[2.4.1]: https://github.com/mantisbt-plugins/source-integration/compare/v2.4.0...v2.4.1
+[2.4.0]: https://github.com/mantisbt-plugins/source-integration/compare/v2.3.1...v2.4.0
+[2.3.1]: https://github.com/mantisbt-plugins/source-integration/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/mantisbt-plugins/source-integration/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/mantisbt-plugins/source-integration/compare/v2.1.5...v2.2.0
 [2.1.5]: https://github.com/mantisbt-plugins/source-integration/compare/v2.1.4...v2.1.5
@@ -481,8 +590,7 @@ Includes all changes and fixes from master-1.2.x branch, up to commit
 [2.0.0-beta.2]: https://github.com/mantisbt-plugins/source-integration/compare/v2.0.0-beta.1...v2.0.0-beta.2
 [2.0.0-beta.1]: https://github.com/mantisbt-plugins/source-integration/compare/v1.5.2...v2.0.0-beta.1
 
-[Unreleased 1.x]: https://github.com/mantisbt-plugins/source-integration/compare/v1.6.1...master-1.3.x
-
+[1.6.2]: https://github.com/mantisbt-plugins/source-integration/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/mantisbt-plugins/source-integration/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/mantisbt-plugins/source-integration/compare/v1.5.9...v1.6.0
 [1.5.9]: https://github.com/mantisbt-plugins/source-integration/compare/v1.5.8...v1.5.9
